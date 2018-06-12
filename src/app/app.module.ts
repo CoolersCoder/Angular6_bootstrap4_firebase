@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-
+import { CommonModule } from '@angular/common';  
 import { AppComponent } from './app.component';
 import { BsNavbarComponent } from './bs-navbar/bs-navbar.component';
 import { HomeComponent } from './home/home.component';
@@ -20,6 +20,9 @@ import {AngularFireModule} from 'angularfire2';
 import {AngularFireDatabaseModule} from 'angularfire2/database';
 import {AngularFireAuthModule, AngularFireAuth} from 'angularfire2/auth'
 import { environment } from '../environments/environment';
+import { AuthService } from './auth.service';
+import { AuthGuardService } from './auth-guard.service';
+import { AdminAuthGuardService } from './AdminAuthGuardService';
 
 @NgModule({
   declarations: [
@@ -37,17 +40,18 @@ import { environment } from '../environments/environment';
   ],
   imports: [
     BrowserModule,
+    CommonModule,
     NgbModule.forRoot(),
     RouterModule.forRoot([
       {path:'' , component: HomeComponent},
       {path:'products', component: ProductsComponent},
       {path:'shopping-cart', component: ShoppingCartComponent},
-      {path:'check-out', component: CheckOutComponent},
-      {path:'order-success', component: OrderSuccessComponent},
       {path:'login', component: LoginComponent},
-      {path:'my/orders', component:MyOrdersComponent},
-      {path:'admin/products', component: AdminProductsComponent},
-      {path:'admin/orders', component: AdminOrdersComponent},
+      {path:'check-out', component: CheckOutComponent, canActivate:[AuthGuardService]},
+      {path:'order-success', component: OrderSuccessComponent, canActivate:[AuthGuardService]},
+      {path:'my/orders', component:MyOrdersComponent, canActivate:[AuthGuardService]},
+      {path:'admin/products', component: AdminProductsComponent, canActivate:[AuthGuardService, AdminAuthGuardService]},
+      {path:'admin/orders', component: AdminOrdersComponent, canActivate:[AuthGuardService, AdminAuthGuardService]},
     ]),
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireAuthModule,
